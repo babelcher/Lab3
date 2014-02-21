@@ -22,7 +22,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx primitives in this code.
@@ -55,7 +55,69 @@ begin
 			input_old <= input;
 		end if;
 	end process;
-
+	
+	process(clk, reset, input_old)
+	begin
+		if(reset='1') then
+			count <= (others => '0');
+			input_new <= '0';
+		elsif(rising_edge(clk)) then
+			input_debounced <= '0';
+			if(input_new = input_old) then
+				count <= count + 1;
+			else
+				input_new <= input_old;
+				count <= (others =>'0');
+			end if;
+			if(count >= 1000) then
+				input_debounced <= '1';
+				count <= (others => '0');
+			end if;
+		end if;
+	end process;
+	
+	--input state register
+	process(clk, reset)
+	begin
+		if(reset='1') then
+			input_reg <= idle;
+		elsif(rising_edge(clk)) then
+			input_reg <= input_next;
+		end if;
+	end process;
+	
+	--next state logic
+	process(input_reg, input, input_debounced)
+	begin
+		input_next <= input_reg;
+		case input_reg is
+			when idle =>
+				if(input = '1') then
+					input_next <= input_pushed;
+				end if;
+			when input_pushed =>
+				input_next <= input_held;
+			when input_held =>
+				if(input = '0' and input_debounced = '1') then
+					input_next <= idle;
+				end if;
+		end case;
+	end process;
+	
+	--pulse state register
+	process(clk, reset)
+	begin
+		if(reset='1') then
+			pulse_reg <= '0';
+		elsif(rising_edge(clk)) then
+			pulse_reg <= pulse_next;
+		end if;
+	end process;
+	
+	pulse_next <= '1' when input_next = input_pushed else
+					  '0';
+					
+	pulse <= pulse_reg;
 
 end Behavioral;
 
