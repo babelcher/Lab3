@@ -38,7 +38,23 @@ end input_to_pulse;
 
 architecture Behavioral of input_to_pulse is
 
+	type input_state is
+		(idle, input_pushed, input_held);
+	signal input_reg, input_next : input_state;
+	signal count : unsigned(10 downto 0);
+	signal pulse_reg, pulse_next, input_old, input_new, input_debounced: STD_LOGIC;
+
 begin
+
+	--shift register
+	process(clk, reset, input)
+	begin
+		if(reset='1') then
+			input_old <= '0';
+		elsif(rising_edge(clk)) then
+			input_old <= input;
+		end if;
+	end process;
 
 
 end Behavioral;
