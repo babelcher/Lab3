@@ -43,19 +43,26 @@ architecture Behavioral of character_gen is
 
 
 	signal row_reg, row_next, column_reg, column_next : STD_LOGIC_VECTOR(10 downto 0);
+	signal address_sig : STD_LOGIC_VECTOR(10 downto 0);
+	signal data_sig : STD_LOGIC_VECTOR(7 downto 0);
 
 begin
 
 	Inst_char_screen_buffer: entity work.char_screen_buffer(Behavioral) PORT MAP(
-		clk => clk,
-		we => write_en,
-		address_a => (others => '0'),
-		address_b => (others => '0'),
-		data_in => ascii_to_write,
-		data_out_a => open,
-		data_out_b => open
+			clk => clk,
+			we => write_en,
+			address_a => (others => '0'),
+			address_b => (others => '0'),
+			data_in => ascii_to_write,
+			data_out_a => open,
+			data_out_b => open
 		);
-
+	
+	Inst_font_rom: entity work.font_rom(arch) PORT MAP(
+			clk => clk,
+			addr => address_sig,
+			data => data_sig
+		);
 
 end Behavioral;
 
