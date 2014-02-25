@@ -44,10 +44,11 @@ architecture Behavioral of character_gen is
 
 	signal row_reg, row_next, column_reg, column_next : STD_LOGIC_VECTOR(10 downto 0);
 	signal address_sig : STD_LOGIC_VECTOR(10 downto 0);
-	signal data_sig : STD_LOGIC_VECTOR(7 downto 0);
+	signal data_sig, rgb_sig : STD_LOGIC_VECTOR(7 downto 0);
 	signal small_col_first, small_col_second, small_col_reg: STD_LOGIC_VECTOR(2 downto 0);
 	signal row_small_next, row_small_reg: STD_LOGIC_VECTOR(3 downto 0);
 	signal data_out_b_sig: STD_LOGIC_VECTOR(6 downto 0);
+	signal mux_output: STD_LOGIC;
 
 begin
 
@@ -65,6 +66,12 @@ begin
 			clk => clk,
 			addr => address_sig,
 			data => data_sig
+		);
+		
+	Inst_eight_to_one_mux: entity work.eight_to_one_mux(Behavioral) PORT MAP(
+			data => data_sig,
+			column => small_col_reg,
+			output => mux_output
 		);
 		
 	--DFF to delay column one clock cycle
@@ -94,7 +101,19 @@ begin
 	--concatenate outputs of row DFF and screen_buffer to get address
 	address_sig <= data_out_b_sig & row_small_reg;
 	
-	
+	--Mux output to determine whether or not to light up the pixel
+	process(mux_output)
+	begin
+		if(mux_output = '1') then
+			r <= (others => '0');
+			g <= (others => '0');
+			b <= (others => '1');
+		else
+			r <= (others => '0');
+			g <= (others => '0');
+			b <= (others => '0');
+		end if;
+	end process;
 	
 	
 
