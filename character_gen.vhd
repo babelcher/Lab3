@@ -46,6 +46,7 @@ architecture Behavioral of character_gen is
 	signal address_sig : STD_LOGIC_VECTOR(10 downto 0);
 	signal data_sig : STD_LOGIC_VECTOR(7 downto 0);
 	signal small_col_first, small_col_second, small_col_reg: STD_LOGIC_VECTOR(2 downto 0);
+	signal row_small_next, row_small_reg: STD_LOGIC_VECTOR(3 downto 0);
 
 begin
 
@@ -65,7 +66,7 @@ begin
 			data => data_sig
 		);
 		
-	--DFF to delay one clock cycle
+	--DFF to delay column one clock cycle
 	process(clk)
 	begin
 		if(rising_edge(clk)) then
@@ -82,6 +83,16 @@ begin
 	end process;
 	
 	small_col_reg <= small_col_second;
+	
+	--DFF to delay row one clock cycle
+	process(clk)
+	begin
+		if(rising_edge(clk)) then
+			row_small_next <= row(3) & row(2) & row(1) & row(0);
+		end if;
+	end process;
+	
+	row_small_reg <= row_small_next;
 	
 
 end Behavioral;
