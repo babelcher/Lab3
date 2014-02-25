@@ -58,7 +58,7 @@ begin
 			address_b => (others => '0'),
 			data_in => ascii_to_write,
 			data_out_a => open,
-			data_out_b => open
+			data_out_b => data_out_b_sig
 		);
 	
 	Inst_font_rom: entity work.font_rom(arch) PORT MAP(
@@ -93,6 +93,8 @@ begin
 	
 	--concatenate outputs of row DFF and screen_buffer to get address
 	address_sig <= data_out_b_sig & row_small_reg;
+	
+	
 	
 	
 
