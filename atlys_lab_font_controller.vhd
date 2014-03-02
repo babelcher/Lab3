@@ -123,7 +123,7 @@ begin
 		end if;
 	end process;
 	
-	--fourth delay
+	--third delay
 	process(pixel_clk)
 	begin
 		if(rising_edge(pixel_clk)) then
