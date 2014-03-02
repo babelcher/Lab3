@@ -49,15 +49,18 @@ architecture Behavioral of character_gen is
 	signal row_small_next, row_small_reg: STD_LOGIC_VECTOR(3 downto 0);
 	signal data_out_b_sig: STD_LOGIC_VECTOR(6 downto 0);
 	signal mux_output: STD_LOGIC;
-	signal count, count_temp: unsigned(11 downto 0);
+	signal count, count_temp: STD_LOGIC_VECTOR(11 downto 0);
+	signal address_b_sig: STD_LOGIC_VECTOR(11 downto 0);
+	
+	constant LAST_SPOT : integer := 2400;
 
 begin
 
 	Inst_char_screen_buffer: entity work.char_screen_buffer(Behavioral) PORT MAP(
 			clk => clk,
 			we => write_en,
-			address_a => (others => '0'),
-			address_b => (others => '0'),
+			address_a => count,
+			address_b => address_b_sig,
 			data_in => ascii_to_write,
 			data_out_a => open,
 			data_out_b => data_out_b_sig
@@ -103,24 +106,25 @@ begin
 	address_sig <= data_out_b_sig & row_small_reg;
 	
 	--internal count
-	count <= count_temp + 1 when rising_edge(write_en) else
+	count <= STD_LOGIC_VECTOR(unsigned(count_temp) + 1) when rising_edge(write_en) else
 				count_temp;
 				
-	count_temp <= (others => '0') when count = 2400 else
+	count_temp <= (others => '0') when unsigned(count) = to_unsigned(LAST_SPOT, 12) else
 						count;
-	
+						
+	--function for the row and column to input into address_b
+	address_b_sig <= STD_LOGIC_VECTOR(unsigned(row(10 downto 4)) * 80 + unsigned(column(10 downto 3)));
 	
 	--Mux output to determine whether or not to light up the pixel
-	process(mux_output)
+	process(mux_output, blank)
 	begin
-		if(mux_output = '1') then
-			r <= (others => '0');
-			g <= (others => '0');
-			b <= (others => '1');
-		else
-			r <= (others => '0');
-			g <= (others => '0');
-			b <= (others => '0');
+		r <= (others => '0');
+		g <= (others => '0');
+		b <= (others => '0');
+		if(blank = '0') then
+			if(mux_output = '1') then
+				b <= (others => '1');
+			end if;
 		end if;
 	end process;
 	
