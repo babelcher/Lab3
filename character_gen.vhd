@@ -59,7 +59,7 @@ begin
 	Inst_char_screen_buffer: entity work.char_screen_buffer(Behavioral) PORT MAP(
 			clk => clk,
 			we => write_en,
-			address_a => count,
+			address_a => count_reg,
 			address_b => address_b_sig(11 downto 0),
 			data_in => ascii_to_write,
 			data_out_a => open,
