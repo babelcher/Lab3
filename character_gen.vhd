@@ -47,10 +47,10 @@ architecture Behavioral of character_gen is
 	signal data_sig, rgb_sig : STD_LOGIC_VECTOR(7 downto 0);
 	signal small_col_first, small_col_second, small_col_reg: STD_LOGIC_VECTOR(2 downto 0);
 	signal row_small_next, row_small_reg: STD_LOGIC_VECTOR(3 downto 0);
-	signal data_out_b_sig: STD_LOGIC_VECTOR(6 downto 0);
+	signal data_out_b_sig: STD_LOGIC_VECTOR(7 downto 0);
 	signal mux_output: STD_LOGIC;
 	signal count, count_temp: STD_LOGIC_VECTOR(11 downto 0);
-	signal address_b_sig: STD_LOGIC_VECTOR(11 downto 0);
+	signal address_b_sig: STD_LOGIC_VECTOR(13 downto 0);
 	
 	constant LAST_SPOT : integer := 2400;
 
@@ -60,7 +60,7 @@ begin
 			clk => clk,
 			we => write_en,
 			address_a => count,
-			address_b => address_b_sig,
+			address_b => address_b_sig(11 downto 0),
 			data_in => ascii_to_write,
 			data_out_a => open,
 			data_out_b => data_out_b_sig
@@ -103,7 +103,7 @@ begin
 	end process;
 	
 	--concatenate outputs of row DFF and screen_buffer to get address
-	address_sig <= data_out_b_sig & row_small_reg;
+	address_sig <= data_out_b_sig(6 downto 0) & row_small_reg;
 	
 	--internal count
 	count <= STD_LOGIC_VECTOR(unsigned(count_temp) + 1) when rising_edge(write_en) else
