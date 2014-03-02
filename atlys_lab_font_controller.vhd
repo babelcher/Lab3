@@ -43,7 +43,7 @@ architecture Behavioral of atlys_lab_font_controller is
 
     -- TODO: Signals, as needed
 
-	signal row_sig, column_sig, ball_x_sig, ball_y_sig, paddle_y_sig: unsigned(10 downto 0);
+	signal row_sig, column_sig: unsigned(10 downto 0);
 	signal red, green, blue: STD_LOGIC_VECTOR(7 downto 0);
 	signal pixel_clk, serialize_clk, serialize_clk_n, blank, h_sync, v_sync, clock_s, red_s, green_s, blue_s, v_completed_sig, button: STD_LOGIC;
 begin
@@ -98,6 +98,13 @@ begin
 		g => green,
 		b => blue
 	);
+	
+	Inst_input_to_pulse: entity work.input_to_pulse(Behavioral) PORT MAP(
+		clk => pixel_clk,
+		reset => reset,
+		input => start,
+		pulse => button
+		);
 	
 	
 
