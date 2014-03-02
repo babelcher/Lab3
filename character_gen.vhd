@@ -49,6 +49,7 @@ architecture Behavioral of character_gen is
 	signal row_small_next, row_small_reg: STD_LOGIC_VECTOR(3 downto 0);
 	signal data_out_b_sig: STD_LOGIC_VECTOR(6 downto 0);
 	signal mux_output: STD_LOGIC;
+	signal count, count_temp: unsigned(11 downto 0);
 
 begin
 
@@ -100,6 +101,14 @@ begin
 	
 	--concatenate outputs of row DFF and screen_buffer to get address
 	address_sig <= data_out_b_sig & row_small_reg;
+	
+	--internal count
+	count <= count_temp + 1 when rising_edge(write_en) else
+				count_temp;
+				
+	count_temp <= (others => '0') when count = 2400 else
+						count;
+	
 	
 	--Mux output to determine whether or not to light up the pixel
 	process(mux_output)
