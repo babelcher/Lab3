@@ -109,7 +109,7 @@ begin
 	count_reg <= STD_LOGIC_VECTOR(unsigned(count_next) + 1) when rising_edge(write_en) else
 				count_next;
 				
-	count_next <= (others => '0') when unsigned(count) = to_unsigned(LAST_SPOT, 12) else
+	count_next <= (others => '0') when unsigned(count_reg) = to_unsigned(LAST_SPOT, 12) else
 						count_reg;
 						
 	--function for the row and column to input into address_b
