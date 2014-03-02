@@ -45,7 +45,7 @@ architecture Behavioral of atlys_lab_font_controller is
 
 	signal row_sig, column_sig: unsigned(10 downto 0);
 	signal red, green, blue: STD_LOGIC_VECTOR(7 downto 0);
-	signal pixel_clk, serialize_clk, serialize_clk_n, blank, h_sync, v_sync, blank1, h_sync1, v_sync1, blank_delayed, h_sync_delayed, v_sync_delayed, clock_s, red_s, green_s, blue_s, v_completed_sig, button: STD_LOGIC;
+	signal pixel_clk, serialize_clk, serialize_clk_n, blank, h_sync, v_sync, blank1, blank2, blank3, blank_delayed, clock_s, red_s, green_s, blue_s, v_completed_sig, button: STD_LOGIC;
 begin
 
 	-- Clock divider - creates pixel clock from 100MHz clock
@@ -92,7 +92,7 @@ begin
 		blank => blank_delayed,
 		row => STD_LOGIC_VECTOR(row_sig),
 		column => STD_LOGIC_VECTOR(column_sig),
-		ascii_to_write => "00011111",
+		ascii_to_write => "00000011",
 		write_en => button,
 		r => red,
 		g => green,
@@ -106,13 +106,11 @@ begin
 		pulse => button
 		);
 		
-	--pipeline to account for 2 clock signal delays
+	--pipeline to account for 4 clock signal delays
 	--first delay
 	process(pixel_clk)
 	begin
 		if(rising_edge(pixel_clk)) then
-			h_sync1 <= h_sync;
-			v_sync1 <= v_sync;
 			blank1 <= blank;
 		end if;
 	end process;
@@ -121,12 +119,17 @@ begin
 	process(pixel_clk)
 	begin
 		if(rising_edge(pixel_clk)) then
-			h_sync_delayed <= h_sync1;
-			v_sync_delayed <= v_sync1;
-			blank_delayed <= blank1;
+			blank2 <= blank1;
 		end if;
 	end process;
 	
+	--fourth delay
+	process(pixel_clk)
+	begin
+		if(rising_edge(pixel_clk)) then
+			blank_delayed <= blank2;
+		end if;
+	end process;
 	
 
 	
