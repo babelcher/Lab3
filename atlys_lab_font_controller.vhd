@@ -92,7 +92,7 @@ begin
 		blank => blank_delayed,
 		row => STD_LOGIC_VECTOR(row_sig),
 		column => STD_LOGIC_VECTOR(column_sig),
-		ascii_to_write => "00000011",
+		ascii_to_write => switch,
 		write_en => button,
 		r => red,
 		g => green,
