@@ -45,7 +45,7 @@ architecture Behavioral of atlys_lab_font_controller is
 
 	signal row_sig, column_sig: unsigned(10 downto 0);
 	signal red, green, blue: STD_LOGIC_VECTOR(7 downto 0);
-	signal pixel_clk, serialize_clk, serialize_clk_n, blank, h_sync, v_sync, blank1, blank2, blank3, blank_delayed, clock_s, red_s, green_s, blue_s, v_completed_sig, button: STD_LOGIC;
+	signal pixel_clk, serialize_clk, serialize_clk_n, blank, h_sync, v_sync, blank1, blank2, blank_delayed, h_sync1, h_sync2, v_sync1, v_sync2, clock_s, red_s, green_s, blue_s, v_completed_sig, button: STD_LOGIC;
 begin
 
 	-- Clock divider - creates pixel clock from 100MHz clock
@@ -112,6 +112,8 @@ begin
 	begin
 		if(rising_edge(pixel_clk)) then
 			blank1 <= blank;
+			h_sync1 <= h_sync;
+			v_sync1 <= v_sync;
 		end if;
 	end process;
 	
@@ -120,6 +122,8 @@ begin
 	begin
 		if(rising_edge(pixel_clk)) then
 			blank2 <= blank1;
+			h_sync2 <= h_sync1;
+			v_sync2 <= v_sync1;
 		end if;
 	end process;
 	
@@ -143,9 +147,9 @@ begin
                 red_p => red,
                 green_p => green,
                 blue_p => blue,
-                blank => blank,
-                hsync => h_sync,
-                vsync => v_sync,
+                blank => blank2,
+                hsync => h_sync2,
+                vsync => v_sync2,
                 -- outputs to TMDS drivers
                 red_s => red_s,
                 green_s => green_s,
