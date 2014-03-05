@@ -32,6 +32,10 @@ In order to figure out where to write the ascii character, the function below ha
 address_b_sig <= STD_LOGIC_VECTOR(unsigned(row(10 downto 4)) * 80 + unsigned(column(10 downto 3)));
 ```
 
+The modules, each ```.vhd``` file, were connected as shown in the schematic below.
+
+![awesome schematic](schematic_lab3.JPG)
+
 ### Test/Debug
 
 * This lab was more straightforward than previous ones since it was rather apparent that I needed to start with the character_gen module. After creating all the constructs in the diagram from the lab handout I moved on to the top level module.
